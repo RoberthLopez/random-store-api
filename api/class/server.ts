@@ -10,11 +10,11 @@ import {
 export class Server {
   private static instance: Server;
   private app: Express;
-  private port: number;
+  private port: string | number;
 
   private constructor() {
     this.app = express();
-    this.port = 3000;
+    this.port = process.env.PORT || 3000;
   }
 
   static getInstance(): Server {

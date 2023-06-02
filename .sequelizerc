@@ -1,0 +1,14 @@
+// module.exports = {
+//   'config': './api/db/config.js',
+//   'models-path': './api/db/models/',
+//   'migrations-path': './api/db/migrations/',
+//   'seeders-path': './api/db/seeders/',
+// }
+var path = require("path");
+
+module.exports = {
+  "config": path.resolve(".", "dist", "api", "db", "config.js"),
+  "models-path": path.resolve(".", "dist", "api", "db", "models"),
+  "migrations-path": path.resolve(".", "dist","api", "db", "migrations"),
+  "seeders-path": path.resolve(".", "dist", "api", "db", "seeders"),
+};

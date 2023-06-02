@@ -1,26 +1,25 @@
 import express, {
   Express,
-  Response,
   Request,
+  Response,
   NextFunction,
   Router,
 } from "express";
-import { UserService } from "../services/user.service";
+import { CategoryService } from "../services/category.service";
 import { validatorHandler } from "../middlewares/validator.handler";
 import {
-  updateUserSchema,
-  createUserSchema,
-  getUserSchema,
-} from "../schema/user.schema";
-import User from "../db/models/user.model";
+  createCategorySchema,
+  updateCategorySchema,
+  getCategorySchema,
+} from "../schema/category.schema";
 
 const router: Router = express.Router();
-const service: UserService = new UserService();
+const service: CategoryService = new CategoryService();
 
 router.get("/", async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const users: User[] = await service.find();
-    res.json(users);
+    const categories = await service.find();
+    res.json(categories);
   } catch (error) {
     next(error);
   }
@@ -28,12 +27,12 @@ router.get("/", async (req: Request, res: Response, next: NextFunction) => {
 
 router.get(
   "/:id",
-  validatorHandler(getUserSchema, "params"),
-  async (req, res, next) => {
+  validatorHandler(getCategorySchema, "params"),
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
-      const user: User | null = await service.findOne(id);
-      res.json(user);
+      const category = await service.findOne(id);
+      res.json(category);
     } catch (error) {
       next(error);
     }
@@ -42,11 +41,11 @@ router.get(
 
 router.post(
   "/",
-  validatorHandler(createUserSchema, "body"),
-  async (req, res, next) => {
+  validatorHandler(createCategorySchema, "body"),
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const body: User = req.body;
-      const newCategory: User = await service.create(body);
+      const body = req.body;
+      const newCategory = await service.create(body);
       res.status(201).json(newCategory);
     } catch (error) {
       next(error);
@@ -56,14 +55,14 @@ router.post(
 
 router.patch(
   "/:id",
-  validatorHandler(getUserSchema, "params"),
-  validatorHandler(updateUserSchema, "body"),
+  validatorHandler(getCategorySchema, "params"),
+  validatorHandler(updateCategorySchema, "body"),
   async (req, res, next) => {
     try {
       const { id } = req.params;
-      const body: User = req.body;
-      const user: User | undefined = await service.update(id, body);
-      res.json(user);
+      const body = req.body;
+      const category = await service.update(id, body);
+      res.json(category);
     } catch (error) {
       next(error);
     }
@@ -72,7 +71,7 @@ router.patch(
 
 router.delete(
   "/:id",
-  validatorHandler(getUserSchema, "params"),
+  validatorHandler(getCategorySchema, "params"),
   async (req, res, next) => {
     try {
       const { id } = req.params;

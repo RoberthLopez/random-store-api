@@ -5,16 +5,25 @@ import {
   getProductSchema,
   createProductSchema,
   updateProductSchema,
+  queryProductSchema,
 } from "../schema/product.schema";
 
-const service = new ProductService();
 const router: Router = express.Router();
+const service: ProductService = new ProductService();
 
 // Trae la lista de productos y podemos enviarle una query ?size=10 con el numero de productos que necesitamos
-router.get("/", async (req: Request, res: Response) => {
-  const products: Product[] = await service.find();
-  res.json(products);
-});
+router.get(
+  "/",
+  validatorHandler(queryProductSchema, "query"),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const products = await service.find(req.query);
+      res.json(products);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 // Los endpoint traidos de forma especifica deben ir antes de los dinamicos
 
@@ -42,10 +51,14 @@ router.get(
 router.post(
   "/",
   validatorHandler(createProductSchema, "body"),
-  async (req: Request, res: Response) => {
-    const body = req.body;
-    const newProduct: Product = await service.create(body);
-    res.status(201).json(newProduct);
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const body = req.body;
+      const newProduct = await service.create(body);
+      res.status(201).json(newProduct);
+    } catch (error) {
+      next(error);
+    }
   }
 );
 
@@ -58,7 +71,7 @@ router.patch(
     try {
       const { id } = req.params;
       const body = req.body;
-      const product: Product = await service.update(id, body);
+      const product = await service.update(id, body);
       res.status(200).json(product);
     } catch (error: any) {
       next(error);

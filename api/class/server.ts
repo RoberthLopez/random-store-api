@@ -5,6 +5,7 @@ import {
   logErrors,
   errorHandler,
   boomErrorHandler,
+  sqlErrorHandler,
 } from "../middlewares/error.handler";
 
 export class Server {
@@ -40,6 +41,7 @@ export class Server {
 
   customMiddlewares(): void {
     this.app.use(logErrors);
+    this.app.use(sqlErrorHandler);
     this.app.use(boomErrorHandler);
     this.app.use(errorHandler);
   }
